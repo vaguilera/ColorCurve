@@ -1,5 +1,5 @@
 
-function ColorCurve(canvas)
+function ColorCurve(canvas, callback)
 {
 	this.points 		= [];
 	this.currentpoint 	= -1;
@@ -10,6 +10,7 @@ function ColorCurve(canvas)
 	this.redraw			= 0;
 	this.values			= [];
 	this.rgb			= [];
+	this.onchange		= callback;
 
 	if (this.height != this.width) {
 		console.log("ERROR: Canvas must have same width and height.");
@@ -42,6 +43,8 @@ ColorCurve.prototype.UpdateValues = function()
 {
 	this.rgb.splice(0, this.rgb.length);	
 	for(var i=0;i<256;i++) this.rgb.push(Math.round(this.GetY(i/255.0)*255));
+
+	this.onchange();
 
 }
 
@@ -98,7 +101,6 @@ ColorCurve.prototype.DrawGrid = function()
 }
 
 // Main function. Calculate curve coeficients and draw the curve
-// Based on the GIMP source code. http://git.gnome.org/browse/gimp/
 ColorCurve.prototype.Quadratic = function(p1,p2,p3,p4)
 {
 	this.ctx.strokeStyle = '#ffffff'; 
