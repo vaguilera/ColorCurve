@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <title>Filters</title>
+    <meta charset="windows-1252">
+    <script src="../src/ColorCurve.min.js"></script>
+<style>
+        canvas {
+            border: 1px white solid;
+            
+        }
+        body {
+          background: #222222;
+        }
+    </style>
+
+  </head>
+  <body onload="start()">
+  	<div>
+    	<canvas id="selector" height="256" width="256"></canvas>
+    </div>
+    <script>
+    function start() {
+      var CV = new ColorCurve('selector');
+  }
+  </script>
+  </body>
+ </html>
