@@ -4,7 +4,7 @@
     <title>Filters</title>
     <meta charset="windows-1252">
     <script src="script.js"></script>
-    <script src="ColorCurve.min.js"></script>
+    <script src="../src/ColorCurve.min.js"></script>
     <style>
 
       a {  color: #dddddd; text-decoration: none;}
@@ -17,15 +17,20 @@
           background: #222222;
           color: #dddddd;
           font-family:"Georgia";
-          font-size: 10px;
+          font-size: 14px;
 
         }
         #main { width: 850px; margin:auto; }
         #upper { width : 402px; margin: auto;  margin-bottom: 10px;}
-        #bottom { width: 780px; margin: auto; }
+        #bottom { width: 800px; margin: auto; }
         #selectorR { background: #641A0D;}
         #selectorG { background: #1A640D;}
         #selectorB { background: #1A0D64;}
+
+        #credits {
+          text-align:center;
+          margin-top: 20px;
+        }
 
     </style>
   </head>
@@ -42,6 +47,9 @@
       <canvas id="selectorR" height="256" width="256"></canvas>
       <canvas id="selectorG" height="256" width="256"></canvas>
       <canvas id="selectorB" height="256" width="256"></canvas>
+  </div>
+  <div id="credits">
+    <a href="http://github.com/vaguilera/ColorCurve">ColorCurve.JS</a> example by Victor Aguilera Github
   </div>
   </div>
   </body>
