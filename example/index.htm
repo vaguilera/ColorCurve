@@ -1,13 +1,11 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
   <head>
-    <title>Filters</title>
-    <meta charset="windows-1252">
-    <script src="script.js"></script>
-    <script src="../src/ColorCurve.min.js"></script>
+    <title>colorCurve.js Example</title>
+    <meta charset="utf-8">
     <style>
 
-      a {  color: #dddddd; text-decoration: none;}
+      a {  color: #dddddd; }
       a:hover { color: #ee44dd; }
         canvas {
             border: 1px white solid;
@@ -32,25 +30,35 @@
           margin-top: 20px;
         }
 
+        #error {
+          margin: auto;
+          margin: 20px;
+          display:none;
+        }
+
     </style>
   </head>
   <body onload="start()">
   <div id="main">
   	<div id="upper">
       <div>
-    	<canvas id="CvOriginal" height="400" width="400"></canvas>     
+      	<canvas id="CvOriginal" height="400" width="400"></canvas>     
+      </div>		  
+      <canvas id="CvModified" height="400" width="400"></canvas>      
     </div>
-		  <canvas id="CvModified" height="400" width="400"></canvas>
-      
-    </div>
+
+  <div id="error">ERROR: This example needs to access to the image as a local file. If you execute this example directly from the file, you probably will get a cross-origin error. To solve this execute this example from a remote webserver (or a local one accesing via localhost) </div>
   <div id="bottom">
       <canvas id="selectorR" height="256" width="256"></canvas>
       <canvas id="selectorG" height="256" width="256"></canvas>
       <canvas id="selectorB" height="256" width="256"></canvas>
   </div>
   <div id="credits">
-    <a href="http://github.com/vaguilera/ColorCurve">ColorCurve.JS</a> example by Victor Aguilera Github
+    <a href="http://github.com/vaguilera/ColorCurve">ColorCurve.JS</a> example by Victor Aguilera
   </div>
   </div>
+  
+  <script src="../src/Colorcurve.js"></script>
+  <script src="script.js"></script>
   </body>
  </html>

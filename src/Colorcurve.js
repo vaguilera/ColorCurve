@@ -1,8 +1,10 @@
 
 function ColorCurve(canvas, callback)
 {
+	'use strict';
+
 	this.points 		= [];
-	this.currentpoint 	= -1;
+	this.currentPoint 	= -1;
 	this.c 				= document.getElementById(canvas);
 	this.ctx 			= this.c.getContext('2d');
 	this.height 		= this.c.height;
@@ -10,11 +12,11 @@ function ColorCurve(canvas, callback)
 	this.redraw			= 0;
 	this.values			= [];
 	this.rgb			= [];
-	this.onchange		= callback;
+	this.onChange		= callback;
 
 	if (this.height != this.width) {
-		console.log("ERROR: Canvas must have same width and height.");
-		return;
+		console.error("ERROR: Canvas must have same width and height.");
+		return undefined;
 	}
 
 	this.points.push({x: 0, y: 0});
@@ -22,47 +24,71 @@ function ColorCurve(canvas, callback)
 	this.points.push({x: 0.750, y: 0.750});
 	this.points.push({x: 1.0, y: 1.0});
 
- 	var me = this; // Copying IQ's trick from Graphtoy -- http://www.iquilezles.org
-	this.c.onmousedown = function(ev) { me.MouseDown(ev); }
-	this.c.onmouseup = function(ev) { me.MouseUp(ev);  me.Draw(); }
-	this.c.onmouseout = function(ev) { me.MouseUp(ev);  me.Draw();}
-	this.c.onmousemove = function(ev) { 
-		me.MouseMove(ev);
+ 	var me = this; 
+	
+	this.c.addEventListener('mousedown', function(ev) { 
+		me.mouseDown(ev); 
+	}, false);
+
+	this.c.addEventListener('mouseup',  function(ev) { 
+		me.mouseUp(ev);  
+		me.draw(); 
+	}, false);
+	
+	this.c.addEventListener('mouseout',  function(ev) { 
+		me.mouseUp(ev);  
+		me.draw(); 
+	}, false);
+	
+	this.c.addEventListener('mousemove',  function(ev) { 
+		me.mouseMove(ev);
 		if (me.redraw == 1) {
-			me.Draw();
+			me.draw();
 			me.redraw = 0;
 		}
-	 }
+	}, false);
 
-	this.Draw();
-	this.UpdateValues();
+	this.draw();
+	this.updateValues();
 }
 
 // Update the RGB array to fit the new curve values. Transform curve points to 0..255 values
-ColorCurve.prototype.UpdateValues = function()
-{
-	this.rgb.splice(0, this.rgb.length);	
-	for(var i=0;i<256;i++) this.rgb.push(Math.round(this.GetY(i/255.0)*255));
+ColorCurve.prototype.updateValues = function() {
+	'use strict';
 
-	this.onchange();
+	this.rgb.splice(0, this.rgb.length);	
+	for(var i=0;i<256;i++) this.rgb.push(Math.round(this.getY(i/255.0)*255));
+
+	if (typeof this.onChange !== "undefined") {
+		this.onChange();
+	}
 
 }
 
 // Compare 2 points
-ColorCurve.prototype.IsEqual = function(p1,p2)
+ColorCurve.prototype.isEqual = function(p1,p2)
 {
-	if (p1.x == p2.x && p1.y == p2.y) return true;
-	else return false;
+	'use strict';
+
+	if (p1.x == p2.x && p1.y == p2.y) {
+		return true;
+	} else {
+		return false;
+	}
+
 }
 
 // Draw the curve
-ColorCurve.prototype.Draw = function() 
-{
+ColorCurve.prototype.draw = function() {
+	'use strict';
+
+	var p1,p4;
+
 	this.values.splice(0, this.values.length);
 	this.ctx.clearRect(0, 0, this.width, this.height);
-	this.DrawGrid();
+	this.drawGrid();
 	
-	for(i=0;i<this.points.length-1;i++)
+	for(var i=0;i<this.points.length-1;i++)
 	{
 		if (i<1) { 
 			p1 = this.points[0];
@@ -74,26 +100,27 @@ ColorCurve.prototype.Draw = function()
 		} else { 
 			p4 = this.points[i+2];
 		} 
-		this.Quadratic(p1,this.points[i],this.points[i+1],p4);
+		this.quadratic(p1,this.points[i],this.points[i+1],p4);
 	}
-	this.DrawPoints();
+	this.drawPoints();
 	
 }
 
 // The background grid
-ColorCurve.prototype.DrawGrid = function() 
-{
+ColorCurve.prototype.drawGrid = function() {
+	'use strict';
+
 	var space = this.width/4.0;	
 
 	this.ctx.beginPath();
 	this.ctx.lineWidth = 1;
 	this.ctx.strokeStyle = '#aaaaaa';
 	
-	for(i=0;i<this.height-space;i+=space)
+	for(var i=0;i<this.height-space;i+=space)
 	{
 		this.ctx.moveTo(0, i+space); this.ctx.lineTo(this.height, i+space);
 	}
-	for(i=0;i<this.height-space;i+=space)
+	for(var i=0;i<this.height-space;i+=space)
 	{
 		this.ctx.moveTo(i+space, 0); this.ctx.lineTo(i+space, this.height);
 	}
@@ -101,8 +128,11 @@ ColorCurve.prototype.DrawGrid = function()
 }
 
 // Main function. Calculate curve coeficients and draw the curve
-ColorCurve.prototype.Quadratic = function(p1,p2,p3,p4)
-{
+ColorCurve.prototype.quadratic = function(p1,p2,p3,p4) {
+	'use strict';
+
+	var x0,x1,x2,x3,y0,y1,y2,y3,dx,dy;
+
 	this.ctx.strokeStyle = '#ffffff'; 
   	this.ctx.lineWidth = 1.5;
   	var slope = 0;
@@ -120,12 +150,12 @@ ColorCurve.prototype.Quadratic = function(p1,p2,p3,p4)
 	x2 = (x0/3.0) + ((2.0*x3)/3.0);
 
 
-	if (this.IsEqual(p1,p2) && this.IsEqual(p3,p4))
+	if (this.isEqual(p1,p2) && this.isEqual(p3,p4))
 	{
       y1 = y0 + (dy / 3.0);
       y2 = y0 + ((dy * 2.0) / 3.0);
  	} 
-	if (this.IsEqual(p1,p2) && !this.IsEqual(p3,p4) )
+	if (this.isEqual(p1,p2) && !this.isEqual(p3,p4) )
 	{
 
 		slope = ((p4.y) - y0) / (p4.x - x0);
@@ -133,7 +163,7 @@ ColorCurve.prototype.Quadratic = function(p1,p2,p3,p4)
 		y1 = y0 + ((y2 - y0) / 2.0);
  
 	}
-	if (!this.IsEqual(p1,p2) && this.IsEqual(p3,p4) ) 
+	if (!this.isEqual(p1,p2) && this.isEqual(p3,p4) ) 
 	{
       slope = (y3 - (p1.y)) / (x3 - p1.x);
 
@@ -141,7 +171,7 @@ ColorCurve.prototype.Quadratic = function(p1,p2,p3,p4)
       y2 = y3 + ((y1 - y3) / 2.0);
  	}
 
-	if ( !this.IsEqual(p1,p2) && !this.IsEqual(p3,p4) ) {
+	if ( !this.isEqual(p1,p2) && !this.isEqual(p3,p4) ) {
 		slope = (y3 - (p1.y)) / (x3 - p1.x);
 		y1 = y0 + ((slope * dx) / 3.0);
 		slope = ((p4.y) - y0) / (p4.x - x0);
@@ -151,11 +181,12 @@ ColorCurve.prototype.Quadratic = function(p1,p2,p3,p4)
 	this.ctx.beginPath(); 	
 	this.ctx.moveTo(x0*this.width, this.height-(y0*this.height)); 
 
-	step =(x3-x0)/20.0;	
-	tx = x0;
-	for(var i=0.0;i<=1.05;i+=0.05)
-		{	
-		ty =     (y0 * Math.pow((1-i),3)) +
+	var step =(x3-x0)/20.0;	
+	var tx = x0;
+
+	for(var i=0.0;i<=1.05;i+=0.05) {	
+		
+		var ty =     (y0 * Math.pow((1-i),3)) +
 	  		(3 * y1 * Math.pow((1-i),2) * i)     +
 	  		(3 * y2 * (1-i) * i     * i)     +
 	      	(y3 * i     * i     * i);
@@ -192,13 +223,13 @@ ColorCurve.prototype.Quadratic = function(p1,p2,p3,p4)
 }
 
 // Draw the control points
-ColorCurve.prototype.DrawPoints = function() 
-{
-	
+ColorCurve.prototype.drawPoints = function() {
+	'use strict';	
+
 	this.ctx.fillStyle = '#ff0000'; 
 	this.ctx.beginPath();	
 
- 	for(i=0;i<this.points.length;i++)
+ 	for(var i=0;i<this.points.length;i++)
  	{ 
 		this.ctx.moveTo(this.points[i].x*this.width,this.height-(this.points[i].y*this.height));
 		this.ctx.arc(this.points[i].x*this.width,this.height-(this.points[i].y*this.height), 3, 0 , 2 * Math.PI, false);
@@ -209,22 +240,23 @@ ColorCurve.prototype.DrawPoints = function()
 }
 
 
-ColorCurve.prototype.MouseDown = function(event) 
-{
+ColorCurve.prototype.mouseDown = function(event) {
+	'use strict';
+
 	if(!event) var event = window.event;
     var x = (event.pageX-this.c.offsetLeft)/this.width,
         y = (event.pageY-this.c.offsetTop)/this.height;
 	
-	dis = 10000;
-	punto = -1;
+	var dis = 10000;
+	var punto = -1;
 
-	for (i=0;i<this.points.length;i++)
+	for (var i=0;i<this.points.length;i++)
 	{
-		x1 = x-this.points[i].x;
-		y1 = y-(1.0-this.points[i].y);
+		var x1 = x-this.points[i].x;
+		var y1 = y-(1.0-this.points[i].y);
 
-		tdis = x1*x1+y1*y1;
-		tdis = Math.sqrt(tdis);
+		var tdis = x1*x1+y1*y1;
+		var tdis = Math.sqrt(tdis);
 		
 		if (tdis < dis) { 
 			dis = tdis;
@@ -232,33 +264,39 @@ ColorCurve.prototype.MouseDown = function(event)
 		}
 		
 	}	
-	this.currentpoint = (dis < 8.0) ? punto : this.currentpoint;	
+	this.currentPoint = (dis < 8.0) ? punto : this.currentPoint;	
 
 }
 
 
-ColorCurve.prototype.MouseUp = function(event) {
+ColorCurve.prototype.mouseUp = function(event) {
    
-	if (this.currentpoint != -1) { 
-		this.UpdateValues();
+   'use strict';
+
+	if (this.currentPoint != -1) { 
+		this.updateValues();
 	}
-	this.currentpoint = -1;
+	this.currentPoint = -1;
 
 }
 
-ColorCurve.prototype.MouseMove = function(event) {
+ColorCurve.prototype.mouseMove = function(event) {
    
-	if (this.currentpoint == -1) return;
+   'use strict';
 
-	if (this.currentpoint > 0) prevx = this.points[this.currentpoint-1].x; else prevx = 0;
-	if (this.currentpoint==this.points.length-1) nextx = 1.0; else nextx = this.points[this.currentpoint+1].x; 
+   	var prevx,nextx;
+
+	if (this.currentPoint == -1) return;
+
+	if (this.currentPoint > 0) prevx = this.points[this.currentPoint-1].x; else prevx = 0;
+	if (this.currentPoint==this.points.length-1) nextx = 1.0; else nextx = this.points[this.currentPoint+1].x; 
 	
-	x = (event.pageX-this.c.offsetLeft)/this.width;
-    y = 1.0-((event.pageY-this.c.offsetTop)/this.height);
+	var x = (event.pageX-this.c.offsetLeft)/this.width;
+    var y = 1.0-((event.pageY-this.c.offsetTop)/this.height);
 
      if(x > prevx && x < nextx) {
-		this.points[this.currentpoint].x = x;
-		this.points[this.currentpoint].y = y;
+		this.points[this.currentPoint].x = x;
+		this.points[this.currentPoint].y = y;
 	
 		this.redraw = 1;		
 	}
@@ -268,9 +306,9 @@ ColorCurve.prototype.MouseMove = function(event) {
 }
 
 // Return the normalized Y value for the specified X value. X should be passed normnalized too
-ColorCurve.prototype.GetY = function(xpos)
-{
-	
+ColorCurve.prototype.getY = function(xpos) {
+	'use strict';
+
 	if (xpos < this.values[0].x) xpos = this.values[0].x;
 	if (xpos > this.values[this.values.length-1].x) xpos = this.values[this.values.length-1].x;
 
