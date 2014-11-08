@@ -3,8 +3,8 @@ colorCurve.JS
 
 A javascript [color curve] (http://en.wikipedia.org/wiki/Curve_(tonality)) editor component 
 
-The idea is to recreate the Color curves editor from Photoshop/Gimp but in Javascript.
-The javascript code is based in GIMP curves code, so is have some improvement over the Adobe Photoshop's one.
+The idea is to recreate the Color curves editor from Photoshop/Gimp in Javascript.
+The javascript code is based on GIMP curves code, so it have some improvement over the Adobe Photoshop's one.
 
 You can see it live [here] (http://s.vaguilera.com/projects/colorcurve)
 
