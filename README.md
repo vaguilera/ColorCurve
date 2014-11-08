@@ -6,6 +6,8 @@ A javascript [color curve] (http://en.wikipedia.org/wiki/Curve_(tonality)) edito
 The idea is to recreate the Color curves editor from Photoshop/Gimp but in Javascript.
 The javascript code is based in GIMP curves code, so is have some improvement over the Adobe Photoshop's one.
 
+You can see it live [here] (http://s.vaguilera.com/projects/colorcurve)
+
 # How do I use colorcurve.js? #
 Just include ColorCurve.min.js on your page and create a canvas for the curve.
 The canvas for the curve *should be square (same width and height)*
